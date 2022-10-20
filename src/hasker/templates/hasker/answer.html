@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}Answer{% endblock %}
+
+{% block content %}
+  <h2>{{ question.title }}</h2>
+  <div class="card">
+    <div class="card-header">
+      {{ question.author }}
+    </div>
+    <div class="card-body">
+      <blockquote class="blockquote mb-0">
+        <p>{{ question.text }}</p>
+        <footer class="blockquote-footer">{{ question.created_date }}</footer>
+      </blockquote>
+      <br>
+    <form action="{% url 'question_rating_url' question.id %}" method="post">
+        {% csrf_token %}
+      <button type="submit" class="btn btn-info" name="like" value="poz">+</button>
+      <button type="button" class="btn btn-dark">{{ question.rating }}</button>
+      <button type="submit" class="btn btn-info" name="like" value="neg">-</button>
+    </form>
+    </div>
+  </div>
+<br>
+{% for answer in answers %}
+
+  <div class="card {% if answer.is_correct_answer %}text-bg-success{% else %}text-bg-light{% endif %} mb-3" >
+    <div class="card-header">{{ answer.author }}</div>
+    <div class="card-body">
+      <h6 class="card-title">{{ answer.created_date }}</h6>
+      <p class="card-text">{{ answer.text }}</p>
+    </div>
+    {% if request.user == question.author %}
+      <form action="{% url 'set_correct_url' answer.id %}" method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-success">True Answer</button>
+      </form>
+    {% endif %}
+    <br>
+    <form action="{% url 'answer_rating_url' answer.id %}" method="post">
+        {% csrf_token %}
+      <button type="submit" class="btn btn-info" name="like" value="poz">+</button>
+      <button type="button" class="btn btn-dark">{{ answer.rating }}</button>
+      <button type="submit" class="btn btn-info" name="like" value="neg">-</button>
+    </form>
+  </div>
+{% endfor %}
+
+{% if request.user.is_authenticated %}
+  <h3>Your answer</h3>
+  <form action="{% url 'answer_url' question.id %}" method="post">
+    {% csrf_token %}
+    <div class="mb-3">
+      <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="answer"></textarea>
+    </div>
+    <button class="btn btn-outline-success" type="submit">Submit</button>
+  </form>
+{% endif %}
+  {% include 'pag.html' with items=answers %}
+{% endblock %}

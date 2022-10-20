@@ -2,8 +2,6 @@ version: '3.3'
 
 volumes:
   postgres_data:
-  static_volume:
-  media_volume:
   socket_volume:
 
 services:
@@ -19,10 +17,14 @@ services:
     build: .
     restart: always
     command: uwsgi --ini uwsgi_config.ini
+#    command: python manage.py runserver 0.0.0.0:6002
+    ports:
+      - 6002:6002
     volumes:
-      - static_volume:/app/static
-      - media_volume:/app/media
+      - ./src/static:/app/static
+      - ./src/media:/app/media
       - socket_volume:/run/uwsgi
+      - ./src:/app
     depends_on:
       - db
     env_file:
@@ -32,8 +34,8 @@ services:
       context: ./nginx
       dockerfile: Dockerfile
     volumes:
-      - static_volume:/app/static
-      - media_volume:/app/media
+      - ./src/static:/app/static
+      - ./src/media:/app/media
       - socket_volume:/run/uwsgi
     ports:
       - ${NGINX_PUBLIC_PORT}:80

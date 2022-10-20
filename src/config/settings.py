@@ -32,6 +32,10 @@ DEBUG = env('DEBUG')
 
 ALLOWED_HOSTS = ['127.0.0.1']
 INTERNAL_IPS = ['127.0.0.1']
+if DEBUG:
+    import socket  # only if you haven't already imported this
+    hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
+    INTERNAL_IPS = [ip[: ip.rfind(".")] + ".1" for ip in ips] + ["127.0.0.1", "10.0.2.2"]
 
 
 # Application definition
@@ -64,7 +68,7 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates'), ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -72,6 +76,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'hasker.context_processors.get_trends',
             ],
         },
     },
@@ -113,6 +118,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTH_USER_MODEL = 'users.Profile'
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
@@ -137,12 +143,12 @@ if DEBUG:
 else:
     STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 LOGIN_REDIRECT_URL = '/'
-LOGIN_URL = '/login/'
+LOGIN_URL = '/user/login/'
 
-DEFAULT_FROM_EMAIL = 'foodgramproject@gmail.com'
-SERVER_EMAIL = 'foodgramproject@gmail.com'
+DEFAULT_FROM_EMAIL = env('EMAIL')
+SERVER_EMAIL = env('EMAIL')
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'foodgramproject@gmail.com'
+EMAIL_HOST_USER = env('EMAIL')
 EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 EMAIL_PORT = 465
 EMAIL_USE_SSL = True
@@ -153,3 +159,32 @@ RECIPE_IMAGE_LIMIT = 50
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+AVATAR_MAX_SIZE_KB = 50
+QUESTIONS_PER_PAGE = 20
+ANSWERS_PER_PAGE = 30
+TRENDING_RESULT_SIZE = 20
+
+LOGGING = {
+    "version": 1,
+    "handlers": {
+        "stdout-handler": {
+            "level": "INFO",
+            "class": "logging.StreamHandler",
+            "stream": "ext://sys.stdout",
+            "formatter": "detailed",
+        },
+    },
+    "formatters": {
+        "detailed": {
+            "format": "[%(asctime)s] %(levelname).1s %(message)s",
+            'datefmt': "%Y.%m.%d %H:%M:%S",
+        },
+    },
+    "loggers": {
+        'django': {
+            'handlers': ["stdout-handler"],
+            'level': 'INFO',
+            'propagate': False,
+        }
+    },
+}
