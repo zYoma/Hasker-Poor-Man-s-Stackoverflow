@@ -1,14 +1,17 @@
-from django.shortcuts import render, redirect, reverse
-from django.views.generic import View
-from django.contrib.auth.mixins import LoginRequiredMixin
-from config import settings
-from .utils import get_paginator
-from .models import Question, Answer, UserAnswerRating, UserQuestionRating
-from .forms import AskQuestionForm
-from django.db.models import Q
-from django.shortcuts import get_object_or_404
+from typing import Optional, Type, Union
+
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Q
+from django.shortcuts import get_object_or_404, redirect, render, reverse
 from django.utils.decorators import method_decorator
+from django.views.generic import View
+
+from config import settings
+
+from .forms import AskQuestionForm
+from .models import Answer, Question, UserAnswerRating, UserQuestionRating
+from .utils import get_paginator
 
 
 class Index(View):
@@ -116,9 +119,9 @@ class SetCorrectAnswer(LoginRequiredMixin, View):
 
 
 class RatingMixin:
-    object_model = None
-    rating_model = None
-    field_name = None
+    object_model: Optional[Union[Type[Answer], Type[Question]]] = None
+    rating_model: Optional[Union[Type[UserQuestionRating], Type[UserAnswerRating]]] = None
+    field_name: Optional[str] = None
 
     def post(self, request, id):
         obj = get_object_or_404(self.object_model, id=id)
@@ -130,7 +133,7 @@ class RatingMixin:
         data_for_get = {self.field_name: obj, 'user': user}
         rating, created = self.rating_model.objects.get_or_create(
             **data_for_get,
-            defaults={'is_like': like, **data_for_get}
+            defaults={'is_like': like, **data_for_get},
         )
         if created:
             obj.change_rating(rating.is_like)
@@ -148,14 +151,14 @@ class RatingMixin:
 
 
 class AnswerRating(RatingMixin, LoginRequiredMixin, View):
-    login_url = '/login/'
+    login_url = '/user/login/'
     object_model = Answer
     rating_model = UserAnswerRating
     field_name = 'answer'
 
 
 class QuestionRating(RatingMixin, LoginRequiredMixin, View):
-    login_url = '/login/'
+    login_url = '/user/login/'
     object_model = Question
     rating_model = UserQuestionRating
     field_name = 'question'

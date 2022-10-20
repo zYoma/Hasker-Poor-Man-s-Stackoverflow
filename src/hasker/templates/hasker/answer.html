@@ -14,12 +14,14 @@
         <footer class="blockquote-footer">{{ question.created_date }}</footer>
       </blockquote>
       <br>
+      {% if request.user.is_authenticated %}
     <form action="{% url 'question_rating_url' question.id %}" method="post">
         {% csrf_token %}
       <button type="submit" class="btn btn-info" name="like" value="poz">+</button>
       <button type="button" class="btn btn-dark">{{ question.rating }}</button>
       <button type="submit" class="btn btn-info" name="like" value="neg">-</button>
     </form>
+      {% endif %}
     </div>
   </div>
 <br>
@@ -38,12 +40,14 @@
       </form>
     {% endif %}
     <br>
+    {% if request.user.is_authenticated %}
     <form action="{% url 'answer_rating_url' answer.id %}" method="post">
         {% csrf_token %}
       <button type="submit" class="btn btn-info" name="like" value="poz">+</button>
       <button type="button" class="btn btn-dark">{{ answer.rating }}</button>
       <button type="submit" class="btn btn-info" name="like" value="neg">-</button>
     </form>
+    {% endif %}
   </div>
 {% endfor %}
 

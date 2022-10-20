@@ -17,7 +17,6 @@ services:
     build: .
     restart: always
     command: uwsgi --ini uwsgi_config.ini
-#    command: python manage.py runserver 0.0.0.0:6002
     ports:
       - 6002:6002
     volumes:

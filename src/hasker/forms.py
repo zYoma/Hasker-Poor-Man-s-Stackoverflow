@@ -1,7 +1,8 @@
-from django import forms
-from .models import Question
 import re
+from django import forms
 from django.core.exceptions import ValidationError
+
+from .models import Question
 
 
 class AskQuestionForm(forms.ModelForm):

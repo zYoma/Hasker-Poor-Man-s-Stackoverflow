@@ -6,4 +6,4 @@ class HaskerConfig(AppConfig):
     name = 'hasker'
 
     def ready(self):
-        import hasker.signals
+        import hasker.signals  # noqa

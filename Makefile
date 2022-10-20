@@ -14,7 +14,10 @@ prod_down:
 	${COMPOSE} down
 
 app_migrate:
-	${COMMAND} python manage.py migrate --noinput
+	${COMMAND} 'python manage.py migrate'
 
 app_shell:
-	${COMMAND} python manage.py shell
+	${COMMAND} 'python manage.py shell'
+
+app_test:
+	${COMMAND} 'python manage.py test'

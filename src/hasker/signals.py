@@ -1,7 +1,8 @@
+from django.core.mail import EmailMessage
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+
 from .models import Answer
-from django.core.mail import EmailMessage
 
 
 @receiver(post_save, sender=Answer)

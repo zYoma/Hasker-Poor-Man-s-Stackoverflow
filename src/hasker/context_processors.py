@@ -1,5 +1,6 @@
-from .models import Question
 from config import settings
+
+from .models import Question
 
 
 def get_trends(request):

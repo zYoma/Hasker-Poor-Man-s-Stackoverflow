@@ -1,8 +1,6 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponse, JsonResponse
-from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import login_required
-from django.views.generic import View
+from django.shortcuts import redirect, render
+
 from .forms import UserRegistrationForm, UserSettingsForm
 
 

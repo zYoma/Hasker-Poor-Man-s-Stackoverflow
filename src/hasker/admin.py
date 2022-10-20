@@ -1,18 +1,18 @@
 from django.contrib import admin
 
-from .models import Answer, Tag, Question
+from .models import Answer, Question, Tag
 
 
 class AnswerAdmin(admin.ModelAdmin):
     list_display = ['author', 'created_date', 'is_correct_answer']
-    search_fields = ['author', ]
+    search_fields = ['author']
 
 
 admin.site.register(Answer, AnswerAdmin)
 
 
 class TagAdmin(admin.ModelAdmin):
-    list_display = ['name', ]
+    list_display = ['name']
 
 
 admin.site.register(Tag, TagAdmin)
