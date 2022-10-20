@@ -9,7 +9,7 @@
       </div>
         <div class="card-footer text-muted">
           {% for question_tag in question.question_tags.all %}
-          <a href="{% url 'tag_url' %}?tag={{ question_tag.tag.name }}">{{ question_tag.tag.name }}</a>
+          <a href="{% url 'tag_url' %}?q=tag:{{ question_tag.tag.name }}">{{ question_tag.tag.name }}</a>
           {% endfor %}
         </div>
     </div>
