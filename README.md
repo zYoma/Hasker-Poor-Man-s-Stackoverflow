@@ -39,3 +39,7 @@ Q&A сайт, аналог stackoverflow.com
 | DOCKER_COMPOSE_FILE | путь до докер композ файла.               | docker-compose.yml                                                 |
 | SERVICE_NAME | название сервиса в докер композ файле     | web                                                                |
 
+
+### API
+Часть методов доступна через API. Свагер доступен при включенном DEBUG по адресу:
+``` /docs/ ```
