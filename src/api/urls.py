@@ -5,10 +5,13 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from .views import AnswerViewSet, QuestionViewSet, SearchViewSet, TrendingViewSet
 
 
+app_name = 'api'
+
+
 router = DefaultRouter()
-router.register('questions', QuestionViewSet)
-router.register('trending', TrendingViewSet)
-router.register('search', SearchViewSet)
+router.register('questions', QuestionViewSet, basename='questions')
+router.register('trending', TrendingViewSet, basename='trending')
+router.register('search', SearchViewSet, basename='search')
 router.register(r'questions/(?P<question_id>\d+)/answers', AnswerViewSet)
 
 urlpatterns = [

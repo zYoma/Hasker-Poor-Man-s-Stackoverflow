@@ -1,15 +1,15 @@
-from typing import Optional, Type, Union
-
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render, reverse
+from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.generic import View
 
 from config import settings
 
 from .forms import AskQuestionForm
+from .mixins import RatingViewMixin
 from .models import Answer, Question, UserAnswerRating, UserQuestionRating
 from .utils import get_paginator
 
@@ -34,7 +34,7 @@ class Index(View):
 
 
 class Ask(LoginRequiredMixin, View):
-    login_url = '/user/login/'
+    login_url = reverse_lazy('users:login')
 
     def get(self, request):
         ask_form = AskQuestionForm()
@@ -48,7 +48,7 @@ class Ask(LoginRequiredMixin, View):
             question_tags = ask_form.cleaned_data['question_tags']
             ask_form.save()
             question.create_tags(question_tags)
-            return redirect('index_url')
+            return redirect('hasker:index_url')
 
         return render(request, 'hasker/ask.html', {'ask_form': ask_form})
 
@@ -104,61 +104,29 @@ class Answers(View):
         question = get_object_or_404(Question, id=id)
         if answer := request.POST.get('answer'):
             Answer.objects.create(text=answer, question=question, author=request.user)
-        return redirect(reverse('answer_url', kwargs={'id': id}))
+        return redirect(reverse('hasker:answer_url', kwargs={'id': id}))
 
 
 class SetCorrectAnswer(LoginRequiredMixin, View):
-    login_url = '/user/login/'
+    login_url = reverse_lazy('users:login')
 
     def post(self, request, id):
         answer = get_object_or_404(Answer.objects.select_related('question__author'), id=id)
         if request.user == answer.question.author:
             answer.set_correct_answer()
 
-        return redirect(reverse('answer_url', kwargs={'id': answer.question.id}))
+        return redirect(reverse('hasker:answer_url', kwargs={'id': answer.question.id}))
 
 
-class RatingMixin:
-    object_model: Optional[Union[Type[Answer], Type[Question]]] = None
-    rating_model: Optional[Union[Type[UserQuestionRating], Type[UserAnswerRating]]] = None
-    field_name: Optional[str] = None
-
-    def post(self, request, id):
-        obj = get_object_or_404(self.object_model, id=id)
-        user = request.user
-        like = request.POST.get('like')
-        likes = {'poz': True, 'neg': False}
-        like = likes[like]
-
-        data_for_get = {self.field_name: obj, 'user': user}
-        rating, created = self.rating_model.objects.get_or_create(
-            **data_for_get,
-            defaults={'is_like': like, **data_for_get},
-        )
-        if created:
-            obj.change_rating(rating.is_like)
-        # При изменении оценки
-        elif rating.is_like != like:
-            # Снимаем предыдущую оценку пользователя
-            obj.rollback_rating(rating.is_like)
-            # сохраняем новую оценку
-            rating.is_like = like
-            rating.save()
-            obj.change_rating(rating.is_like)
-
-        redirect_obj_id = obj.question.id if self.object_model is Answer else obj.id
-        return redirect(reverse('answer_url', kwargs={'id': redirect_obj_id}))
-
-
-class AnswerRating(RatingMixin, LoginRequiredMixin, View):
-    login_url = '/user/login/'
+class AnswerRating(RatingViewMixin, LoginRequiredMixin, View):
+    login_url = reverse_lazy('users:login')
     object_model = Answer
     rating_model = UserAnswerRating
     field_name = 'answer'
 
 
-class QuestionRating(RatingMixin, LoginRequiredMixin, View):
-    login_url = '/user/login/'
+class QuestionRating(RatingViewMixin, LoginRequiredMixin, View):
+    login_url = reverse_lazy('users:login')
     object_model = Question
     rating_model = UserQuestionRating
     field_name = 'question'

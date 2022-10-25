@@ -5,21 +5,21 @@
 
 {% block content %}
 
-  <h1>Регистрация</h1>
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {% for field in user_form %}
+<h1>Регистрация</h1>
+<form method="post" action="{% url 'users:register' %}" enctype="multipart/form-data">
+    {% csrf_token %}
+    {% for field in user_form %}
 
-            <div class="mb-3">
-                <label class="form-label">{{ field.label }}</label>
-                <div class="mb-3">
-                    {{ field }}
-                    {% if field.errors %}<span>{{ field.errors }}</span>{% endif %}
-                </div>
-            </div>
+         <div class="mb-3">
+             <label class="form-label">{{ field.label }}</label>
+             <div class="mb-3">
+                 {{ field }}
+                 {% if field.errors %}<span>{{ field.errors }}</span>{% endif %}
+             </div>
+         </div>
 
-        {% endfor %}
-        <button class="btn btn-primary" type="submit">Создать аккаунт</button>
-    </form>
+    {% endfor %}
+    <button class="btn btn-primary" type="submit">Создать аккаунт</button>
+</form>
 
 {% endblock %}

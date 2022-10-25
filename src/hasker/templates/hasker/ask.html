@@ -5,18 +5,18 @@
 
 {% block content %}
 <h1>Add a question</h1>
-  <form method="post">
-      {% csrf_token %}
-      {% for field in ask_form %}
+<form method="post" action="{% url 'hasker:ask_url' %}">
+    {% csrf_token %}
+    {% for field in ask_form %}
         <div class="mb-3">
-          <label class="form-label">{{ field.label }}</label>
+            <label class="form-label">{{ field.label }}</label>
             <div class="mb-3">
                 {{ field }}
                 {% if field.errors %}<span>{{ field.errors }}</span>{% endif %}
             </div>
         </div>
-      {% endfor %}
-      <button class="btn btn-primary" type="submit">Ask!</button>
-  </form>
+    {% endfor %}
+    <button class="btn btn-primary" type="submit">Ask!</button>
+</form>
 
 {% endblock %}

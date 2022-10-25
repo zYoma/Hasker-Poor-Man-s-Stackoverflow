@@ -5,10 +5,10 @@
 
 {% block content %}
 
-  <h1>Settings</h1>
+    <h1>Settings</h1>
     <p>Username: {{ request.user.username }}</p>
 
-    <form method="post" enctype="multipart/form-data">
+    <form method="post" action="{% url 'users:settings' %}" enctype="multipart/form-data">
         {% csrf_token %}
         {% for field in user_form %}
 

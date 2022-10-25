@@ -3,7 +3,7 @@
 {% block title %}Index{% endblock %}
 
 {% block content %}
-  <h2>New questions</h2>
-  {% include 'hasker/question.html' with questions=questions %}
-  {% include 'pag.html' with items=questions %}
+    <h2>New questions</h2>
+    {% include 'hasker/_question.html' with questions=questions %}
+    {% include '_pag.html' with items=questions %}
 {% endblock %}

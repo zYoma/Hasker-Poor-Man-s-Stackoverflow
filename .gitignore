@@ -129,4 +129,4 @@ dmypy.json
 .pyre/
 .env
 media/
-static/
+__pycache__

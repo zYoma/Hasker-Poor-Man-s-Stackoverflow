@@ -36,8 +36,11 @@ Q&A сайт, аналог stackoverflow.com
 | NGINX_PUBLIC_PORT | порт на котором nginx будет ждать запросы | 80                                                                 |
 | EMAIL | почта от которой будут приходить письма   | ma@gmail.com                                                       |
 | EMAIL_HOST_PASSWORD | пароль от почты                           | pass                                                               |
+| EMAIL_PORT | порт для email                            | 465                                                                |
+| EMAIL_USE_SSL | флаг ssl                                  | 127.0.0.1, 8.8.8.8                                                 |
 | DOCKER_COMPOSE_FILE | путь до докер композ файла.               | docker-compose.yml                                                 |
 | SERVICE_NAME | название сервиса в докер композ файле     | web                                                                |
+| ALLOWED_HOSTS | список разрешенных хостов                 | 127.0.0.1, 8.8.8.8                                                 |
 
 
 ### API

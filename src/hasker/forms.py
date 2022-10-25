@@ -6,6 +6,9 @@ from .models import Question
 
 
 class AskQuestionForm(forms.ModelForm):
+    question_tags = forms.CharField(
+        label='Tags', max_length=20, widget=forms.TextInput(attrs={'class': "form-control"}))
+
     class Meta:
         model = Question
         fields = ('title', 'text', 'question_tags')
@@ -13,9 +16,6 @@ class AskQuestionForm(forms.ModelForm):
             'text': forms.Textarea(attrs={'class': 'form-control'}),
             'title': forms.TextInput(attrs={'class': 'form-control'})
         }
-
-    question_tags = forms.CharField(
-        label='Tags', max_length=20, widget=forms.TextInput(attrs={'class': "form-control"}))
 
     def clean_question_tags(self):
         tags = self.cleaned_data['question_tags'].strip()

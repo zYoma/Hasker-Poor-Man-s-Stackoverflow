@@ -1,29 +1,16 @@
 import logging
-from django.db import models
+from django.core.mail import EmailMessage
+from django.db import models, transaction
 from django.utils.translation import gettext_lazy as _
+
+from .managers import QuestionManager
+from .mixins import RatingMixin
 
 
 logger = logging.getLogger('django')
 
 
-class Rating:
-    def change_rating(self, is_like):
-        # Изменяем рейтинг в соответствии с оценкой
-        self.rating = self.rating + 1 if is_like else self.rating - 1
-        self.save(update_fields=['rating'])
-
-    def rollback_rating(self, is_like):
-        # Снимаем предыдущую оценку пользователя
-        self.rating = self.rating - 1 if is_like else self.rating + 1
-        self.save(update_fields=['rating'])
-
-
-class QuestionManager(models.Manager):
-    def get_queryset(self):
-        return super().get_queryset().select_related('author').prefetch_related('question_tags__tag', 'answers')
-
-
-class Question(Rating, models.Model):
+class Question(RatingMixin, models.Model):
     title = models.CharField(max_length=200, verbose_name=_("Заголовок"))
     text = models.TextField(verbose_name=_("Содержание"))
     author = models.ForeignKey("users.Profile", on_delete=models.CASCADE,
@@ -42,12 +29,13 @@ class Question(Rating, models.Model):
     def create_tags(self, tags):
         # Собираем список тегов, чистим от дублей
         tag_list = list(set(tags.split(',')))
-        for tag in tag_list:
-            tag = tag.strip()
-            # Если тега нет, создаем, иначе получаем.
-            new_tag, _ = Tag.objects.get_or_create(name=tag, defaults={'name': tag})
-            # Создаем связь с вопросом
-            QuestionTag.objects.create(question=self, tag=new_tag)
+        with transaction.atomic():
+            for tag in tag_list:
+                tag = tag.strip()
+                # Если тега нет, создаем, иначе получаем.
+                new_tag, _ = Tag.objects.get_or_create(name=tag, defaults={'name': tag})
+                # Создаем связь с вопросом
+                QuestionTag.objects.create(question=self, tag=new_tag)
 
 
 class Tag(models.Model):
@@ -66,7 +54,7 @@ class QuestionTag(models.Model):
                             related_name="question_tags", verbose_name=_("Тег"))
 
 
-class Answer(Rating, models.Model):
+class Answer(RatingMixin, models.Model):
     text = models.TextField(verbose_name=_("Содержание"))
     author = models.ForeignKey("users.Profile", on_delete=models.CASCADE,
                                related_name="answers", verbose_name=_("Автор"))
@@ -82,9 +70,21 @@ class Answer(Rating, models.Model):
 
     def set_correct_answer(self):
         question_answers = Answer.objects.filter(question=self.question)
-        for answer in question_answers:
-            answer.is_correct_answer = answer.id == self.id
-            answer.save(update_fields=['is_correct_answer'])
+        with transaction.atomic():
+            for answer in question_answers:
+                answer.is_correct_answer = answer.id == self.id
+                answer.save(update_fields=['is_correct_answer'])
+
+    def save(self, *args, **kwargs):
+        if self.pk is None:
+            email = EmailMessage(
+                'Answer on your question',
+                f'See new answer on link {self.question.id}',
+                to=[self.author.email]
+            )
+            email.send()
+
+        super().save(*args, **kwargs)
 
 
 class UserAnswerRating(models.Model):

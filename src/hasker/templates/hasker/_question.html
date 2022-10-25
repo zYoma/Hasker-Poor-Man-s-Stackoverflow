@@ -1,0 +1,17 @@
+{% for question in questions %}
+    <div class="mb-3">
+        <div class="card">
+            <h5 class="card-header">{{ question.author }} ::: {{ question.created_date }}</h5>
+            <div class="card-body">
+                <h5 class="card-title">{{ question.title }}</h5>
+                <p class="card-text">{{ question.text|truncatechars:100 }}</p>
+                <a href="{% url 'hasker:answer_url' question.id %}" class="btn btn-primary">reply</a> votes: {{ question.rating }}  answers: {{ question.answers.count }}
+            </div>
+            <div class="card-footer text-muted">
+                {% for question_tag in question.question_tags.all %}
+                    <a href="{% url 'hasker:tag_url' %}?q=tag:{{ question_tag.tag.name }}">{{ question_tag.tag.name }}</a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endfor %}

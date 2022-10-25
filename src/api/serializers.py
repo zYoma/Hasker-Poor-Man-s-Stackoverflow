@@ -8,7 +8,7 @@ class QuestionSerializer(serializers.ModelSerializer):
     rating = serializers.ReadOnlyField()
 
     class Meta:
-        fields = ('__all__')
+        fields = ('id', 'title', 'text', 'author', 'created_date', 'rating')
         model = Question
 
 
@@ -22,5 +22,5 @@ class TrendingSerializer(serializers.ModelSerializer):
 class AnswerSerializer(serializers.ModelSerializer):
 
     class Meta:
-        fields = ('__all__')
+        fields = ('id', 'text', 'author', 'created_date', 'is_correct_answer', 'rating', 'question')
         model = Answer

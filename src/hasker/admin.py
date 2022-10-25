@@ -8,14 +8,8 @@ class AnswerAdmin(admin.ModelAdmin):
     search_fields = ['author']
 
 
-admin.site.register(Answer, AnswerAdmin)
-
-
 class TagAdmin(admin.ModelAdmin):
     list_display = ['name']
-
-
-admin.site.register(Tag, TagAdmin)
 
 
 class QuestionAdmin(admin.ModelAdmin):
@@ -24,3 +18,5 @@ class QuestionAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Question, QuestionAdmin)
+admin.site.register(Tag, TagAdmin)
+admin.site.register(Answer, AnswerAdmin)

@@ -3,6 +3,9 @@ from django.urls import path
 from .views import AnswerRating, Answers, Ask, Index, QuestionRating, Search, SetCorrectAnswer
 
 
+app_name = 'hasker'
+
+
 urlpatterns = [
     path('', Index.as_view(), name='index_url'),
     path('ask/', Ask.as_view(), name='ask_url'),

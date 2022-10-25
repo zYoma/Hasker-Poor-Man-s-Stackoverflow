@@ -30,8 +30,8 @@ services:
       - ./.env
   nginx:
     build:
-      context: ./nginx
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: Dockerfile.nginx
     volumes:
       - ./src/static:/app/static
       - ./src/media:/app/media
