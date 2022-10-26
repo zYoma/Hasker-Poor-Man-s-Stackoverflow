@@ -8,7 +8,7 @@
 <h1>Регистрация</h1>
 <form method="post" action="{% url 'users:register' %}" enctype="multipart/form-data">
     {% csrf_token %}
-    {% for field in user_form %}
+    {% for field in form %}
 
          <div class="mb-3">
              <label class="form-label">{{ field.label }}</label>

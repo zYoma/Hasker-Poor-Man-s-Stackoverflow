@@ -2,6 +2,7 @@ from typing import Optional
 
 import base64
 from django.core.files.base import ContentFile
+from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, redirect, reverse
 
 
@@ -70,3 +71,46 @@ class MockAvatarMixin:
                         'CohX4HUtlOcQjLYCu+fzGJH2QRKvP3UNz8bWk1qMxjGTOMThZ3kvgLI5AzFfo379UAAAAASUVORK5CYII='
         img_data = avatar_base64.split(',', maxsplit=1)[1]
         return ContentFile(base64.decodestring(img_data.encode()), name='temp.jpeg')
+
+
+class CustomPaginator:
+    per_page: Optional[int] = None
+
+    def get_paginator_objects(self, *args, **kwargs):
+        raise NotImplementedError
+
+    def get_context_data(self, *args, **kwargs):
+        objects = self.get_paginator_objects(*args, **kwargs)
+        is_paginator, prev_url, next_url, parameters, last_page, page = self.get_paginator(
+            objects,
+            self.per_page
+        )
+        return {
+            'objects': page,
+            'is_paginator': is_paginator,
+            'prev_url': prev_url,
+            'next_url': next_url,
+            'parameters': parameters,
+            'page_end': last_page,
+        }
+
+    def get_paginator(self, objs, objs_per_page):
+        """ Пагинатор для использования в различных представлениях. """
+        get_copy = self.request.GET.copy()
+        parameters = get_copy.pop('page', True) and get_copy.urlencode()
+        paginator = Paginator(objs, objs_per_page)
+        last_page = paginator.num_pages
+        page_number = self.request.GET.get('page', 1)
+        page = paginator.get_page(page_number)
+        is_paginator = page.has_other_pages()
+        if page.has_previous():
+            prev_url = '?page={}'.format(page.previous_page_number())
+        else:
+            prev_url = ''
+
+        if page.has_next():
+            next_url = '?page={}'.format(page.next_page_number())
+        else:
+            next_url = ''
+
+        return is_paginator, prev_url, next_url, parameters, last_page, page

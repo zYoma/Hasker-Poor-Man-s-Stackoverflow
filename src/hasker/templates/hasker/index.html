@@ -4,6 +4,6 @@
 
 {% block content %}
     <h2>New questions</h2>
-    {% include 'hasker/_question.html' with questions=questions %}
-    {% include '_pag.html' with items=questions %}
+    {% include 'hasker/_question.html' with questions=objects %}
+    {% include '_pag.html' with items=objects %}
 {% endblock %}

@@ -25,7 +25,7 @@
         </div>
     </div>
     <br>
-    {% for answer in answers %}
+    {% for answer in objects %}
 
         <div class="card {% if answer.is_correct_answer %}text-bg-success{% else %}text-bg-light{% endif %} mb-3" >
             <div class="card-header">{{ answer.author }}</div>
@@ -61,5 +61,5 @@
            <button class="btn btn-outline-success" type="submit">Submit</button>
         </form>
    {% endif %}
-      {% include '_pag.html' with items=answers %}
+      {% include '_pag.html' with items=objects %}
 {% endblock %}
