@@ -11,7 +11,7 @@
                         <a class="nav-link active" aria-current="page" href="{% url 'users:logout' %}">Log out</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'users:settings' %}"><img src="{{ request.user.get_avatar_or_plug.url }}" width="20">{{ request.user.username }}</a>
+                        <a class="nav-link" href="{% url 'users:profile_detail' %}"><img src="{{ request.user.get_avatar_or_plug.url }}" width="20">{{ request.user.username }}</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'hasker:ask_url' %}"><b>ASK</b></a>

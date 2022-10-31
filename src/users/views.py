@@ -19,7 +19,7 @@ class Register(FormView):
         return render(self.request, 'users/register_done.html', {'new_user': new_user})
 
 
-class Settings(LoginRequiredMixin, FormView):
+class ProfileDetail(LoginRequiredMixin, FormView):
     login_url = reverse_lazy('users:login')
     template_name = 'users/settings.html'
     form_class = UserSettingsForm

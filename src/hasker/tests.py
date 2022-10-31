@@ -5,8 +5,8 @@ from django.test import Client, TestCase
 from django.urls import reverse
 from rest_framework import status
 
-from hasker.mixins import MockAvatarMixin
 from hasker.models import Answer, Question, Tag
+from users.test.mocks import MockAvatarMixin
 
 
 class EmailTest(MockAvatarMixin, TestCase):
